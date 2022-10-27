@@ -4,4 +4,4 @@ Dependencies:
 
 start backend server:
     - python manage.py runserver 
-	- can now receive requests from localhost:3000
+    - can now receive requests from localhost:3000

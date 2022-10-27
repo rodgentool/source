@@ -1,0 +1,182 @@
+.container-newProject {
+  width: 100%;
+  max-width: 600px;
+  position: relative;
+}
+
+.container-title {
+  font-size: 16px;
+  position: absolute;
+  top: 10px;
+}
+
+.container-exit {
+  position: absolute;
+  top: 8px;
+  right: 20px;
+  font-weight: 700;
+  font-size: 18px;
+  opacity: 0.5;
+}
+
+.container-exit:hover {
+  cursor: pointer;
+}
+
+.wrapper-int {
+  height: 400px;
+  display: flex;
+  flex-flow: column wrap;
+  justify-content: space-between;
+  align-content: space-between;
+}
+
+@media only screen and (max-height: 500px) {
+  .wrapper-int {
+    height: calc(100vh - 140px);
+  }
+}
+
+@media only screen and (max-height: 300px) {
+  body {
+    overflow: auto;
+  }
+  .wrapper-int {
+    height: 150px;
+  }
+}
+
+.cont-left-top {
+  height: 40%;
+  width: 32%;
+  position: relative;
+}
+
+.select-topology {
+  padding-top: 25px;
+  width: 100%;
+  height: 100%;
+  border: none;
+  direction: ltr;
+}
+
+.select-topology > option {
+  padding: 5px 5px;
+}
+
+.cont-left-bottom {
+  height: 53%;
+  width: 32%;
+  position: relative;
+}
+
+.cont-right {
+  width: 63%;
+  height: 100%;
+  position: relative;
+}
+
+.cont-title {
+  position: absolute;
+  display: inline-block;
+  text-align: center;
+}
+
+.cont-with-title {
+  overflow: auto;
+  position: absolute;
+  top: 25px;
+  width: 100%;
+  border: solid 1px black;
+  height: calc(100% - 25px);
+  box-shadow: 0 0px 2px 0px rgba(0, 0, 0, 0.2);
+}
+
+.cont-alone-prev {
+  border: solid 1px black;
+  height: 100%;
+  box-shadow: 0 0px 2px 0px rgba(0, 0, 0, 0.2);
+  display: flex;
+  overflow: auto;
+}
+
+.btn-newProject {
+  float: right;
+  width: 100px;
+  margin-top: 15px;
+  margin-left: 15px;
+  margin-right: -2px;
+}
+
+.cont-content-free {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+}
+
+.container-options {
+  padding: 25px 20px 10px 20px;
+  font-size: 14px;
+  width: calc(100% - 40px);
+}
+
+.wrapper-options {
+  padding: 0px 0px 20px 0px;
+  font-size: 14px;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  align-items: center;
+  width: 100%;
+}
+
+.options-label {
+  /*flex: 1;*/
+  width: 120px;
+}
+
+select {
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.options-input {
+  padding: 6px;
+  flex: 2;
+  text-align: -webkit-right;
+  width: 100px;
+  border: 1px solid var(--primary1);
+  border-radius: 0.2rem;
+  border-top-left-radius: 0.2rem;
+  border-top-right-radius: 0.2rem;
+  border-bottom-right-radius: 0.2rem;
+  border-bottom-left-radius: 0.2rem;
+}
+
+.road-dir {
+  font-size: 16px;
+}
+
+.input-wh {
+  margin-left: auto;
+}
+.input-wh input {
+  width: 50px;
+}
+
+/* This can be erase when updated in NewProject*/
+.grid-nb-num {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.p-right{
+    padding-right: 20px;
+}
+
+.grey{
+    color: gray;
+}

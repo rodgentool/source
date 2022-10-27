@@ -1,0 +1,13 @@
+.tickColor {
+    stroke: #e5e2e0;
+}
+
+.bars{
+    fill: var(--primary1);
+    stroke: black;
+}
+
+.text {
+    font-weight: bold;
+    font-size: 15px;
+}

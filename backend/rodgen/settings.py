@@ -55,7 +55,7 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    'http://localhost',
+    'http://localhost:3000',
     'http://rodgen.zdv.uni-mainz.de',
 ]
 

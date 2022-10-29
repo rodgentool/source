@@ -22,6 +22,7 @@ export const PanelNbh = ({
     }   
 
     if(nbhsSelected && nbhsSelected[0]?.hasOwnProperty('bRoads')){
+        console.log("display")
         const nbhSize= handleNbhSize();
         return(
             <>

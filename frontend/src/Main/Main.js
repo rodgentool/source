@@ -480,8 +480,7 @@ ${networkToString}
                 setIsRightPanelMin(false);
             let key = selection[0]?.hasOwnProperty('bRoads');
             if (key)
-                setActiveTab(key)
-            
+                setActiveTab("Nbh")
         } else if(!isRightPanelMin) {
             setActiveTab("network")
         }

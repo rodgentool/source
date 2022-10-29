@@ -167,7 +167,6 @@ export const CanvasContainer = ({
                 }
                 if(!elementsSelected){
                     for (let road of nbh.bRoads){
-                        console.log("3");
                         road.isSelected = true;
                     }
                     onChangeNetwork(Object.assign(Object.create(Object.getPrototypeOf(network)), network));

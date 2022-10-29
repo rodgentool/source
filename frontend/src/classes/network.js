@@ -1157,7 +1157,7 @@ export class Network{
 
 
     deselect(selection){
-        if(selection[0]?.constructor.name === 'Nbh'){
+        if(selection[0]?.hasOwnProperty('bRoads')){
             for(let nbh of selection)
                 for (let road of nbh.bRoads)
                     road.isSelected = false;

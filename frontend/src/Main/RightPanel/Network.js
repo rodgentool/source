@@ -195,7 +195,7 @@ export const PanelNetwork = ({
                                     let nodeB = network.nodes[route[j]]
                                     for(let nbhId in network.nbhs){
                                         let involvedNbh = network.nbhs[nbhId]
-                                        if(involvedNbh != newRoad[i-1].nbh){
+                                        if(involvedNbh !== newRoad[i-1].nbh){
                                         let nbhSides_ = involvedNbh.getbRoadsByPolySide();
                                         for(let side of nbhSides_){
                                             let sideNodes = involvedNbh.getSideNodes(side);
@@ -505,7 +505,7 @@ export const PanelNetwork = ({
                                     queue.unshift(nodeId);
                                     prevNode[nodeId]= visiting;
                                 }
-                                if (nodeId == standAloneNodes[1].id){
+                                if (nodeId === standAloneNodes[1].id){
                                     queue = [];
                                     break;
                                 }

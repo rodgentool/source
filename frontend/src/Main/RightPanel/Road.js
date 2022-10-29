@@ -56,7 +56,7 @@ export const PanelRoad = ({
         onChangeNetwork(Object.assign(Object.create(Object.getPrototypeOf(network)), network));
     }
 
-    if(roadsSelected && roadsSelected[0]?.constructor.name === 'Road'){
+    if(roadsSelected && roadsSelected[0]?.hasOwnProperty('direction')){
         return(
             <>
             <Section name="Details">

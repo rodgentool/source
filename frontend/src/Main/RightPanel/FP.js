@@ -90,7 +90,7 @@ export const PanelFP = ({
 
         return {fsp: [`${roundTo2(fspLenght)} Km`, fspTime], ffp: [`${roundTo2(ffpLenght)} Km`, ffpTime]};
 
-    }, [ffp, fsp])
+    }, [ffp, fsp, network.roads])
 
 
     const handleStartAlgo = () => {

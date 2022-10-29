@@ -61,7 +61,7 @@ export const Canvas = ({
                 drawRoad(ctxNet, netScale, netScale, newRoad, outerNodeRadius, innerNodeRadius, arrowSize-1, innerLineWidth, roadColors, roadTypes, roadData.type, roadData.direction);
             }
             ctxNet.restore();
-    }, [network, intersectionNodes, netScale, roadColors, roadTypes, newRoad, roadData, ffp, fsp, showFfp, showFsp])
+    }, [network, intersectionNodes, netScale, roadColors, roadTypes, newRoad, roadData, ffp, fsp, showFfp, showFsp, arrowSize, innerLineWidth, innerNodeRadius, outerLineWidth, outerNodeRadius])
 
 
     const drawCanvasGrid = useCallback((transform) => {
@@ -144,7 +144,7 @@ export const Canvas = ({
             return () => select(canvasNet).on('.zoom', null);
         }
  
-    }, [transform, onChangeTransform, drawCanvasNet, drawCanvasGrid]); 
+    }, [transform, onChangeTransform, drawCanvasNet, drawCanvasGrid, canvasSize.w]); 
 
 
     useEffect(() => {
@@ -167,7 +167,7 @@ export const Canvas = ({
 
             drawCanvasNet(transform);
         }
-    }, [network, roadColors, intersectionNodes, roadTypes, newRoad])
+    }, [network, roadColors, intersectionNodes, roadTypes, newRoad, canvasSize.w, drawCanvasNet, transform])
 
     
     useEffect(() => {
@@ -176,7 +176,7 @@ export const Canvas = ({
             //console.log('grid');
             drawCanvasGrid(transform);
         }
-    }, [grid, gridTick])
+    }, [grid, gridTick, canvasSize.w, drawCanvasGrid, transform])
 
 
     return (

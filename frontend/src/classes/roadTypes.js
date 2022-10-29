@@ -73,7 +73,7 @@ export class RoadTypes {
 
     findRoadTypeBySpeed(speed){
         for(let typeKey in this.types){
-            if(this.types[typeKey].maxSpeed == speed)
+            if(this.types[typeKey].maxSpeed === toString(speed))
                 return this.types[typeKey];
         }
         return this.types[0];

@@ -95,13 +95,13 @@ export const CanvasContainer = ({
         //OK  
         }else if(!roadData){
             if (elementsSelected && !event.shiftKey){
-                if(elementsSelected[0]?.constructor.name === 'Nbh'){
+                if(elementsSelected[0]?.hasOwnProperty('bRoads')){
                     for (let i = 0; i < elementsSelected.length; i++){
                         let nbh = elementsSelected[i];
                         for (let road of nbh.bRoads)
                             road.isSelected = false;
                     }
-                } else if (elementsSelected[0]?.constructor.name === 'Road'){
+                } else if (elementsSelected[0]?.hasOwnProperty('direction')){
                     for (let i = 0; i < elementsSelected.length; i++) { 
                         let road = elementsSelected[i];
                         road.isSelected = false; 
@@ -115,11 +115,12 @@ export const CanvasContainer = ({
                 for(let road of nbh.bRoads){
                     if (road.type && road.containsPoint(point, oLineWidth)){
                         if (!elementsSelected){
+                            console.log("1");
                             road.isSelected = true;
                             onChangeNetwork(Object.assign(Object.create(Object.getPrototypeOf(network)), network));
                             onChangeElementsSelected([road]);
                             return;
-                        }else if(elementsSelected[0]?.constructor.name === 'Road'){
+                        }else if(elementsSelected[0]?.hasOwnProperty('direction')){
                             road.isSelected = !road.isSelected;
                             onChangeNetwork(Object.assign(Object.create(Object.getPrototypeOf(network)), network));
                             if(!elementsSelected.includes(road)){
@@ -146,7 +147,7 @@ export const CanvasContainer = ({
                                 onChangeNetwork(Object.assign(Object.create(Object.getPrototypeOf(network)), network));
                                 onChangeElementsSelected([road]);
                                 return;
-                            }else if(elementsSelected[0]?.constructor.name === 'Road'){
+                            }else if(elementsSelected[0]?.hasOwnProperty('direction')){
                                 road.isSelected = !road.isSelected;
                                 onChangeNetwork(Object.assign(Object.create(Object.getPrototypeOf(network)), network));
                                 if(!elementsSelected.includes(road)){
@@ -166,13 +167,14 @@ export const CanvasContainer = ({
                 }
                 if(!elementsSelected){
                     for (let road of nbh.bRoads){
+                        console.log("3");
                         road.isSelected = true;
                     }
                     onChangeNetwork(Object.assign(Object.create(Object.getPrototypeOf(network)), network));
                     onChangeElementsSelected([nbh]);
                     return;
 
-                } else if (elementsSelected[0]?.constructor.name === 'Nbh'){
+                } else if (elementsSelected[0]?.hasOwnProperty('bRoads')){
                     for(let nbh_ of elementsSelected){
                         for (let road of nbh_.bRoads)
                             road.isSelected = false;
@@ -189,6 +191,7 @@ export const CanvasContainer = ({
                         }
                     }
                     for(let nbh_ of elementsSelected){
+                        console.log("4")
                         for (let road of nbh_.bRoads)
                             road.isSelected = true;
                     }

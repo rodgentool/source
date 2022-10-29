@@ -15,7 +15,6 @@ import axios from "axios";
 import { roundTo2 } from "../utilityFunctions/mathFunctions";
 import {getAffectedNbhs} from "../utilityFunctions/osmFunctions";
 import { scaleLinear } from "d3-scale";
-import { geoConicConformalRaw } from "d3";
 
 
 export const Main = ({
@@ -57,8 +56,6 @@ export const Main = ({
     const [showFfp, setShowFfp] = useState(true);
     const [fsp, setFsp] = useState(null);
     const [ffp, setFfp] = useState(null);
-
-
 
     const [zoomTransform, setZoomTransform] = useState({k: 1, x: 0, y: 0})
     const [isRightPanelMin, setIsRightPanelMin] = useState(false);
@@ -481,8 +478,8 @@ ${networkToString}
         if (selection){
             if(isRightPanelMin)
                 setIsRightPanelMin(false);
-            let key = selection[0]?.constructor.name;
-            if (key !== 'node')
+            let key = selection[0]?.hasOwnProperty('bRoads');
+            if (key)
                 setActiveTab(key)
             
         } else if(!isRightPanelMin) {
@@ -893,7 +890,7 @@ ${networkToString}
         let jsonNet = network.toString('json-server');
         axios({
             method: 'POST',
-            url: url,
+            url: "http://rodgen.zdv.uni-mainz.de:8080" + url,
             data: jsonNet
         }).then((res) => {
             setDataReturn(res.data);
@@ -1157,7 +1154,7 @@ ${networkToString}
                     handleCancel={handleCancel}
                     network={networkCopy}
                     onChangeNetwork={setNetworkCopy}
-                    nbhSelected={elementsSelected && elementsSelected[0]?.constructor.name === 'Nbh'? networkCopy?.nbhs[elementsSelected[0].id]: null}
+                    nbhSelected={elementsSelected && elementsSelected[0]?.hasOwnProperty('bRoads')? networkCopy?.nbhs[elementsSelected[0].id]: null}
                     globalScale={scale}
                     handlePrev={handleCancel}
                     minNbhSize={minNbhSize}

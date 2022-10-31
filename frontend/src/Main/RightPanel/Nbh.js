@@ -10,7 +10,6 @@ export const PanelNbh = ({
     handleInternalNet,
     }) => {
 
-    console.log("inside", nbhsSelected);
     const handleNbhSize = () => {
         let size = network.calculateNbhSize(nbhsSelected[0]);
         for(let i = 1; i < nbhsSelected.length; i++){
@@ -22,7 +21,6 @@ export const PanelNbh = ({
     }   
 
     if(nbhsSelected && nbhsSelected[0]?.hasOwnProperty('bRoads')){
-        console.log("display")
         const nbhSize= handleNbhSize();
         return(
             <>

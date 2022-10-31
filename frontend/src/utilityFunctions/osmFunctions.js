@@ -2,6 +2,7 @@ import {min, max} from "d3";
 import { scaleLinear } from "d3-scale";
 import {polygonContains} from "d3-polygon";
 import { roundTo2, distanceBetween2Points} from "../utilityFunctions/mathFunctions";
+import { url } from "../url"
 
 
 import axios from "axios";
@@ -153,7 +154,7 @@ export const filterOsmData = (data, polygon, roadTypes) => {
 export const getComponents = (json) => {
     let components = axios({
         method: 'POST',
-        url: 'connectivity/',
+        url: url + '/connectivity/',
         data: json
     }).then((res) => res.data[3]);
     return components;

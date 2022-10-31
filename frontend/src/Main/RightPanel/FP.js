@@ -3,6 +3,7 @@ import { Section } from "../../Components/Section";
 import axios from "axios";
 import { useMemo } from "react";
 import { roundTo2 } from "../../utilityFunctions/mathFunctions";
+import { url } from "../../url"
 
 export const PanelFP = ({
     network, 
@@ -100,7 +101,7 @@ export const PanelFP = ({
             let jsonNet = network.toString('json-server', [fpStart.id, fpEnd.id]);
             axios({
             method: 'POST',
-            url: '/fp/',
+            url:  url + '/fp/',
             data: jsonNet,
             }).then((res) => {
             let data = res.data;

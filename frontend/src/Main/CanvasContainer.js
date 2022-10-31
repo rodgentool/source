@@ -64,7 +64,7 @@ export const CanvasContainer = ({
 
 
     const handleClick = (event) => {
-        let windowMargins = {left: 9, top: 58}
+        let windowMargins = {left: 9, top: 91}
         let transformd3 = zoomIdentity.translate(transform.x, transform.y).scale(transform.k);
 
         let point = [netScale.invert(transformd3.invertX(event.clientX-windowMargins.left)), netScale.invert(transformd3.invertY(event.clientY-windowMargins.top))]

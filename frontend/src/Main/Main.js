@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import '../Style/Main.css';
-
+import {Header} from '../Components/Header';
 import { OsmImport } from '../OSMImport/OsmImport';
 import { MainNavbar } from "./MainNavbar";
 import { CanvasContainer } from './CanvasContainer';
@@ -15,6 +15,7 @@ import axios from "axios";
 import { roundTo2 } from "../utilityFunctions/mathFunctions";
 import {getAffectedNbhs} from "../utilityFunctions/osmFunctions";
 import { scaleLinear } from "d3-scale";
+import { url } from "../url"
 
 
 export const Main = ({
@@ -112,7 +113,7 @@ export const Main = ({
                                         }
                                         let alreadySet = false;
                                         for(let roadId in roads){
-                                            if(roads[roadId].nodes.includes(Number(word[1])) && roads[id-1].nodes.includes(Number(word[2])))
+                                            if(roads[roadId].nodes.includes(Number(word[1])) && roads[roadId].nodes.includes(Number(word[2])))
                                                 roads[roadId].direction = "both";
                                                 break;
                                         }
@@ -122,11 +123,8 @@ export const Main = ({
                                             console.log(word[4])      
                                             id++;
                                         }
-
-                                    
-                                        }
                                     }
-                                        
+                                }
                     
                                 let factorToOriginalCoord = 0;
                                 if (roads[id-1]){
@@ -478,9 +476,9 @@ ${networkToString}
         if (selection){
             if(isRightPanelMin)
                 setIsRightPanelMin(false);
-            let key = selection[0]?.hasOwnProperty('bRoads');
+            let key = selection[0]?.hasOwnProperty('bRoads')? "Nbh" : selection[0]?.hasOwnProperty('direction')? "Road" : null;
             if (key)
-                setActiveTab("Nbh")
+                setActiveTab(key)
         } else if(!isRightPanelMin) {
             setActiveTab("network")
         }
@@ -885,11 +883,11 @@ ${networkToString}
         setDrawPointer(true);
     }
 
-    const callAlgoFromServer = (url) =>{
+    const callAlgoFromServer = (algorithm) =>{
         let jsonNet = network.toString('json-server');
         axios({
             method: 'POST',
-            url: "http://rodgen.zdv.uni-mainz.de:8080" + url,
+            url: url + algorithm,
             data: jsonNet
         }).then((res) => {
             setDataReturn(res.data);
@@ -980,6 +978,8 @@ ${networkToString}
     
 
     return (
+        <>
+        <Header></Header>
         <div onClick={handleClick}>
             <MainNavbar 
                 isNavActive={isNavActive}
@@ -1294,5 +1294,6 @@ ${networkToString}
         
 
         </div>
+        </>
     );
 }

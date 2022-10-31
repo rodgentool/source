@@ -1,14 +1,14 @@
-//OK
-
 import '../Style/NewProject.css';
 import React, { useEffect, useState } from 'react';
+import {Header} from '../Components/Header';
 import { Options } from './Options';
 import { Preview } from './Preview';
 import { Topology } from './Topology';
 import { Network } from '../classes/network';
 import { FormValidation } from "../Components/FormValidation";
 import axios from "axios";
-import {polygonCentroid, polygonContains} from "d3-polygon";
+import { polygonContains} from "d3-polygon";
+import { url } from "../url"
 
 export const NewProject = ({
     onChangeView, 
@@ -143,19 +143,29 @@ export const NewProject = ({
                                             roads[id-1].direction = "both";
                                             continue;
                                         }
-                                            roads[id] = {nodes: [Number(word[1]), Number(word[2])], length: Number(word[3]), direction: "oneway"};           
+                                        let alreadySet = false;
+                                        for(let roadId in roads){
+                                            if(roads[roadId].nodes.includes(Number(word[1])) && roads[roadId].nodes.includes(Number(word[2])))
+                                                roads[roadId].direction = "both";
+                                                break;
+                                        }
+
+                                        if(!alreadySet){
+                                            roads[id] = {nodes: [Number(word[1]), Number(word[2])], length: Number(word[3]), direction: "oneway", type: word[4]}; 
+                                            console.log(word[4])      
                                             id++;
                                         }
                                     }
+                                }
                                     
-                                console.log(roads);    
                                 jsonNet = jsonNet.slice(0, jsonNet.length - 1);
                                 jsonNet += '}}'
                                 axios({
                                     method: 'POST',
-                                    url: "/backboneFromGr/",
+                                    url: url + "/backboneFromGr/",
                                     data: jsonNet
                                 }).then((res) => {
+                                    console.log("cicles", res);
                                     
                                     let nodesSet = new Set();
                                     for (const cycle of res.data)
@@ -243,15 +253,10 @@ export const NewProject = ({
                                             return dist2 - dist1;
                                          });
                                     
-                                         console.log(bNodes);
 
                                         //Create Polygon
-
                                         let polygon = bNodes.map(node => [node.x, node.y]);
-                                        console.log(polygon);
-
                                         let allNodes = newNetwork.getAllIntersectionNodes();
-                                        console.log("before", allNodes.length);
                                         
                                         for(let nbhRoad of nbhRoads){
                                             for(let node of nbhRoad.nodes){
@@ -261,7 +266,6 @@ export const NewProject = ({
                                                 }
                                             }
                                         }
-                                        console.log("after", allNodes.length)
 
                                         let empty = true;
                                         for(let node of allNodes){
@@ -323,40 +327,43 @@ export const NewProject = ({
 
 
     return (
-    <div className='wrapperBody'>
-        <div className='containerRound container-newProject'>
-            <div className="container-title">New Project</div>
-            <div className="container-exit" onClick={handleCancel}>x</div>
-            <div className="wrapper-int">
-                <Topology 
-                    topology={network.topology}
-                    onChangeTopology={handleTopology} 
-                    onChangeNetwork={setNetwork}
-                    network={network}
-                    handleErrors={handleChange}
-                />
-                <Preview 
-                    network={network}
-                />
-                <Options
-                    network={network}
-                    onChangeNetwork={setNetwork}
-                    errors={errors}
-                    structure={data.structure}
-                    handleErrors={handleChange}
-                    roadsDirection={roadsDirection}
-                    roadsType={roadsType}
-                    roadsMaxSpeed={data.speed}
-                    onChangeRoadsDirection={handleRoadsDirection}
-                    onChangeRoadsType={handleRoadsType}
-                    onChangeRoadTypeSpeed={handleRoadTypeMaxSpeed}
-                    onChangeGrFile={setGrFile}
-                    onChangeCoFile={setCoFile}
-                />
-            </div>  
-            <button className='btn btn-newProject' type='button' onClick={handleSubmit}>Create</button>
-            <button className='btn btn-newProject' type='button' onClick={handleCancel}>Cancel</button>
+    <>
+        <Header></Header>
+        <div className='wrapperBody'>
+            <div className='containerRound container-newProject'>
+                <div className="container-title">New Project</div>
+                <div className="container-exit" onClick={handleCancel}>x</div>
+                <div className="wrapper-int">
+                    <Topology 
+                        topology={network.topology}
+                        onChangeTopology={handleTopology} 
+                        onChangeNetwork={setNetwork}
+                        network={network}
+                        handleErrors={handleChange}
+                    />
+                    <Preview 
+                        network={network}
+                    />
+                    <Options
+                        network={network}
+                        onChangeNetwork={setNetwork}
+                        errors={errors}
+                        structure={data.structure}
+                        handleErrors={handleChange}
+                        roadsDirection={roadsDirection}
+                        roadsType={roadsType}
+                        roadsMaxSpeed={data.speed}
+                        onChangeRoadsDirection={handleRoadsDirection}
+                        onChangeRoadsType={handleRoadsType}
+                        onChangeRoadTypeSpeed={handleRoadTypeMaxSpeed}
+                        onChangeGrFile={setGrFile}
+                        onChangeCoFile={setCoFile}
+                    />
+                </div>  
+                <button className='btn btn-newProject' type='button' onClick={handleSubmit}>Create</button>
+                <button className='btn btn-newProject' type='button' onClick={handleCancel}>Cancel</button>
+            </div>
         </div>
-    </div>
+    </>
     )
 }               

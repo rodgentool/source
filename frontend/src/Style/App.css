@@ -22,7 +22,7 @@ select {
 
 /*Before warpper*/
 .wrapperBody {
-  height: calc(100vh - 16px);
+  height: calc(100vh - 49px);
   display: flex;
 }
 /*Before container*/
@@ -179,6 +179,12 @@ select {
   margin-left: 60px;
   margin-right: 60px;
 }
+
+.mx-14 {
+    margin-left: 70px;
+    margin-right: 70px;
+  }
+  
 
 .pb-ex3 {
   padding-bottom: 3px;

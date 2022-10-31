@@ -1,4 +1,5 @@
-// OK
+import logo from './imgs/Logo.png'; 
+import {Header} from './Components/Header';
 
 /**
  * Start View
@@ -26,15 +27,18 @@ export const Welcome = ({onChangeView, onChangeOpenProject}) => {
     }
 
     return (
-    <div className='wrapperBody'>
-        <div className='containerRound'>
-            <h2 className="mt-0 mb-10 mx-10 wellcome">&nbsp; Welcome RODGEN &nbsp;</h2>
-            <div className="wrapperFlexColumn">
-                <button className='btn mx-12 mb-4' type='button' onClick= {handleCreateProject}>Create a new Project</button>
-                <label className="btn mx-12 mb-6">Open A Project
-                <input className='hidden' type='file' id="files" onClick={(e) => {e.target.value = null}} onChange={handleOpenProject}/></label>
+    <>
+        <Header></Header>
+        <div className='wrapperBody'>
+            <div className='containerRound'>
+                <h2 className="mt-0 mb-10 mx-14 wellcome"><img src={logo} alt="RODGEN"></img></h2>
+                <div className="wrapperFlexColumn">
+                    <button className='btn mx-12 mb-4' type='button' onClick= {handleCreateProject}>Create a new Project</button>
+                    <label className="btn mx-12 mb-6">Open A Project
+                    <input className='hidden' type='file' id="files" accept=".json" onClick={(e) => {e.target.value = null}} onChange={handleOpenProject}/></label>
+                </div>
             </div>
         </div>
-    </div>
+    </>
     );
 }

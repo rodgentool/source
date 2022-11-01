@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 import json
-from main.graphAlgorithms import fromJsonToGraph
+from main.graph import fromJsonToGraph
 import networkx as nx
 from rest_framework.decorators import api_view
 
@@ -13,14 +13,37 @@ def backboneFromGr(request):
     if request.method == 'POST':
         body = json.loads(request.body)
         G = fromJsonToGraph(body['nodes'], body['roads'])
-        # print(G)
         G = G.to_undirected()
-        cycles = nx.cycle_basis(G)
-        # print(cycles)
+        G = nx.k_core(G, k=2)
+        G = G.to_directed()
+        cycles = sorted(nx.simple_cycles(G))
+        filter_cycles = []
+        for cycle in cycles:
+            if len(cycle) > 2:
+                filter_cycles.append(cycle)
+        cycles = []
+
+        for i in range(len(filter_cycles)):
+            cycles.append(filter_cycles[i])
+            for j in range(len(filter_cycles)):
+                equal = True
+                if(len(filter_cycles[i]) == len(filter_cycles[j])):
+                    for k in range(len(filter_cycles[i])):
+                        if (filter_cycles[i][k] != filter_cycles[j][k]):
+                            equal = False
+                            break
+                    if(equal):
+                        break
+
+                if set(filter_cycles[j]).issubset(set(filter_cycles[i])):
+                    cycles.pop()
+                    break
+
+        #print(G, cycles, len(cycles))
         return HttpResponse(json.dumps(cycles))
 
 
-@api_view(["POST"])
+@ api_view(["POST"])
 def fp(request):
     if request.method == 'POST':
         body = json.loads(request.body)
@@ -77,7 +100,7 @@ def fp(request):
         return HttpResponse(response)
 
 
-@api_view(["POST"])
+@ api_view(["POST"])
 def connectivity(request):
     response = []
     if request.method == 'POST':
@@ -107,7 +130,7 @@ def connectivity(request):
         return HttpResponse(response)
 
 
-@api_view(["POST"])
+@ api_view(["POST"])
 def analysis(request):
     if request.method == 'POST':
         body = json.loads(request.body)

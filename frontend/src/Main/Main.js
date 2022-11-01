@@ -113,9 +113,10 @@ export const Main = ({
                                         }
                                         let alreadySet = false;
                                         for(let roadId in roads){
-                                            if(roads[roadId].nodes.includes(Number(word[1])) && roads[roadId].nodes.includes(Number(word[2])))
+                                            if(roads[roadId].nodes.includes(Number(word[1])) && roads[roadId].nodes.includes(Number(word[2]))){
                                                 roads[roadId].direction = "both";
                                                 break;
+                                            }
                                         }
 
                                         if(!alreadySet){

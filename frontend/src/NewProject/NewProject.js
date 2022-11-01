@@ -136,26 +136,28 @@ export const NewProject = ({
                                 for(let line of grDataLines){
                                     const word = line.split(" ");
                                     if(word[0] === 'a'){
-                                        jsonNet += `"${id}": ["${word[1]}", "${word[2]}", "${word[3]}", "oneway", "${word[4]}"],`;
-                                        // TO-DO: Type
-     
                                         if (id !== 0 && roads[id-1].nodes.includes(Number(word[1])) && roads[id-1].nodes.includes(Number(word[2]))){
                                             roads[id-1].direction = "both";
                                             continue;
                                         }
                                         let alreadySet = false;
                                         for(let roadId in roads){
-                                            if(roads[roadId].nodes.includes(Number(word[1])) && roads[roadId].nodes.includes(Number(word[2])))
+                                            if(roads[roadId].nodes.includes(Number(word[1])) && roads[roadId].nodes.includes(Number(word[2]))){
                                                 roads[roadId].direction = "both";
                                                 break;
+                                            }
                                         }
 
                                         if(!alreadySet){
-                                            roads[id] = {nodes: [Number(word[1]), Number(word[2])], length: Number(word[3]), direction: "oneway", type: word[4]}; 
-                                            console.log(word[4])      
+                                            roads[id] = {nodes: [Number(word[1]), Number(word[2])], length: Number(word[3]), direction: "oneway", type: word[4]};     
                                             id++;
                                         }
                                     }
+                                }
+
+                                for(let roadId in roads){
+                                    let road = roads[roadId];
+                                    jsonNet += `"${roadId}": ["${road.nodes[0]}", "${road.nodes[1]}", "${road.length}", "${road.direction}", "${road.type}"],`;
                                 }
                                     
                                 jsonNet = jsonNet.slice(0, jsonNet.length - 1);
@@ -182,118 +184,94 @@ export const NewProject = ({
                                     }
                                     
                                     let newNetwork = new Network('Custom', true);
-                                    
                                     for (let nodeId of nodesSet){
                                         let node = nodes[nodeId];
-                                        newNetwork.addNode([node.x*factorToOriginalCoord, node.y*factorToOriginalCoord],true, true, false, nodeId);
+                                        node.x = node.x*factorToOriginalCoord
+                                        node.y = node.y*factorToOriginalCoord
+                                        newNetwork.addNode([node.x, node.y],true, true, false, nodeId);
                                     }
 
-                                    //If both nodes add road
-                                    let nbhsRoads = [];
-                                    for(let i = 0; i < res.data.length; i++){
-                                        nbhsRoads.push([]);
-                                    }
-
-                        
                                     for (let roadId in roads){
-                                        let newRoad = null;
                                         let road = roads[roadId];
-                                  
-                                        for (let i = 0; i < res.data.length; i++){
-                                            if (res.data[i].includes(road.nodes[0].toString()) && res.data[i].includes(road.nodes[1].toString())){
-                                                if (!newRoad)
-                                                    newRoad = newNetwork.addRoad([newNetwork.nodes[road.nodes[0]], newNetwork.nodes[road.nodes[1]]], newNetwork.roadTypes.types[0], road.direction, true); 
-                                                nbhsRoads[i].push(newRoad);
-                                            }
-                                        } 
-                                    }
+                                        if(nodesSet.has(road.nodes[0]) && nodesSet.has(road.nodes[1])){
+                                            newNetwork.addRoad([newNetwork.nodes[road.nodes[0]], newNetwork.nodes[road.nodes[1]]], newNetwork.roadTypes.types[0], road.direction, true); 
 
-                                // N/bNodes are inside => is no nbh
-                                    for(let nbhRoads of nbhsRoads){ 
-                                        //get Nodes
-                                        let bNodes = []
-                                        let coordinates = [];
-                                        for (let road of nbhRoads){
-                                            for (let node of road.nodes){
-                                                if(!bNodes.includes(node)){
-                                                    bNodes.push(node);
-                                                    coordinates.push([node.x, node.y])
-                                                }
-                                            }
                                         }
+                                    }
+                   
+                             
+                                // N/bNodes are inside => is no nbh
+                                    for(let cycleId in res.data){ 
+                                        //console.log(cycleId);
+                                        let cycle = res.data[cycleId];
+
+                                        let coordinates = [];
+                                        for(let nodeId of cycle){
+                                            let node = newNetwork.nodes[nodeId];
+                                            coordinates.push([node.x, node.y])
+                                        }
+                                        //console.log("coordinates", coordinates)
+                              
                                         let center = {
                                             x: coordinates.reduce((partialSum, a) => partialSum + a[0], 0)/coordinates.length,
                                             y: coordinates.reduce((partialSum, a) => partialSum + a[1], 0)/coordinates.length
                                         }
                                 
                                         //sort Nodes
-                                        bNodes.sort(function(a, b) {
+                           
+                                        coordinates.sort(function(a, b) {
 
-                                            if (a.x >= center.x && b.x  < center.x)
+                                            if (a[0] >= center.x && b[0]  < center.x)
                                                 return -1;
                                 
-                                            if (a.x < center.x && b.x  >= center.x)
+                                            if (a[0] < center.x && b[0]  >= center.x)
                                                 return 1;
                                             
                                 
-                                            if (a.x  === center.x && b.x  === center.x) {
-                                                if (a.y >= center.y || b.y >= center.y)
-                                                    return b.y - a.y;
-                                                return a.y - b.y;
+                                            if (a[0]  === center.x && b[0]  === center.x) {
+                                                if (a[1] >= center.y || b[1] >= center.y)
+                                                    return b[1] - a[1];
+                                                return a[1] - b[1];
                                             }
                                 
-                                            let det = (a.x - center.x) * (b.y - center.y) - (b.x - center.x) * (a.y - center.y);
+                                            let det = (a[0] - center.x) * (b[1] - center.y) - (b[0] - center.x) * (a[1] - center.y);
                                             if (det < 0)
                                                 return -1;
                                             if (det > 0)
                                                 return 1;
                                 
-                                            let dist1 = (a.x - center.x) * (a.x - center.x) + (a.y - center.y) * (a.y - center.y);
-                                            let dist2 = (b.x - center.x) * (b.x - center.x) + (b.y - center.y) * (b.y - center.y);
+                                            let dist1 = (a[0] - center.x) * (a[0] - center.x) + (a[1] - center.y) * (a[1] - center.y);
+                                            let dist2 = (b[0] - center.x) * (b[0] - center.x) + (b[1] - center.y) * (b[1] - center.y);
                                             return dist2 - dist1;
                                          });
-                                    
 
-                                        //Create Polygon
-                                        let polygon = bNodes.map(node => [node.x, node.y]);
-                                        let allNodes = newNetwork.getAllIntersectionNodes();
-                                        
-                                        for(let nbhRoad of nbhRoads){
-                                            for(let node of nbhRoad.nodes){
-                                                let index = allNodes.indexOf(node);
-                                                if(index !== -1){
-                                                    allNodes.splice(index, 1);
-                                                }
-                                            }
-                                        }
-
+                                
+                                        let polygon = coordinates;
                                         let empty = true;
+
+                                        let allNodes = newNetwork.getAllIntersectionNodes();
                                         for(let node of allNodes){
-                                            if(polygonContains(polygon, [node.x, node.y])){
+                                            if(!cycle.includes(node.id.toString()) && polygonContains(polygon, [node.x, node.y])){
                                                 empty = false;
                                                 break;
                                             }
                                         }
-                                   
-                                        if(empty)
-                                            newNetwork.addNbh(nbhRoads);
+                                        if(empty){
+                                            let nbhRoads = [];
+                                                for(let roadId in newNetwork.roads){
+                                                    let road =  newNetwork.roads[roadId]
+                                                    if (cycle.includes(road.nodes[0].id.toString()) && cycle.includes(road.nodes[1].id.toString())){
+                                                        nbhRoads.push(road);
+                                                    }  
+                                                }
+                                                console.log(nbhRoads);
+                                                newNetwork.addNbh(nbhRoads);
+                                        }
                                     }
-
-                                    
-                             
-
-
-
-
-                                
 
                                     console.log(newNetwork);
                                     onChangeNetwork(newNetwork);
                                     onChangeView('main');
-                                 
-                                   
-
-                                    //Red
                              
                                 })
                                   .catch((err) => {

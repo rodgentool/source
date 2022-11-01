@@ -11,7 +11,7 @@ export class Network{
         this.topology = initialTopology;
         this.size =  {w: 0,  h:0};
         this.roadTypes =  new RoadTypes();
-        this.nodes =  {};
+        this.nodes = {};
         this.roads = {};
         this.nbhs = {};
         this.nextNodeId = 0;

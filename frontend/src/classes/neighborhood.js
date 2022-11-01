@@ -63,24 +63,56 @@ export class Nbh{
         let bNodes = [];
         let coordinates = [];
   
-        for (let road of this.bRoads){
-            for (let node of road.nodes){
-                if(!bNodes.includes(node) && node.isNbhBoundary){
+        for (let road of this.bRoads)
+            for (let node of road.nodes)
+                if(!bNodes.includes(node)){
                     bNodes.push(node);
                     coordinates.push([node.x, node.y])
                 }
-            }
-        }
-    
-        //let center = polygonCentroid(coordinates);
+
         let center = {
             x: coordinates.reduce((partialSum, a) => partialSum + a[0], 0)/coordinates.length,
             y: coordinates.reduce((partialSum, a) => partialSum + a[1], 0)/coordinates.length
         }
 
         this.sortNodesCounterclockwise(center, bNodes);
-        
-        return bNodes;
+    
+        let adjList = {};
+        for (let road of this.bRoads){
+            let nodes = road.nodes
+            adjList[nodes[0].id] = []
+            adjList[nodes[nodes.length-1].id] = []
+        }
+
+        for (let road of this.bRoads){
+            let nodes = road.nodes
+                adjList[nodes[0].id].push(nodes[nodes.length-1])
+                adjList[nodes[nodes.length-1].id].push(nodes[0])
+        }
+
+        let startNode = bNodes[0];
+        let current = bNodes[1];
+        let sortedBNodes =[startNode, current];
+        let i = 0;
+        while(current !== startNode || i > bNodes.length*2){
+            for(let node of adjList[current.id]){
+                i++;
+                if (!sortedBNodes.includes(node)){
+                    sortedBNodes.push(node);
+                    current = node;
+                }
+                if(node === startNode)
+                    current = node;
+            }
+        }
+
+        bNodes = [];
+        for(let node of sortedBNodes){
+            if(node.isNbhBoundary)
+                bNodes.push(node);
+                
+        }
+        return sortedBNodes;
     }
 
 
@@ -168,10 +200,6 @@ export class Nbh{
 
     addRoadToBRoads(road){
         this.bRoads.push(road);
-        // console.log("Roads before")
-        // for(let road of this.bRoads){
-        //     console.log(road.id, ":", road.nodes[0].id, road.nodes[1].id);
-        // }
 
         if(this.bRoads.length === 1)
             return;
@@ -197,22 +225,25 @@ export class Nbh{
 
         this.sortNodesCounterclockwise(center, bNodes);
         
-        bNodes.push(bNodes[0]);
-    
         let sortedBRoads = [];
-        for(let i = 1; i < bNodes.length; i++){
-            for (let road of this.bRoads){
-                if (road.nodes.includes(bNodes[i-1]) && road.nodes.includes(bNodes[i])){
-                    sortedBRoads.push(road);
-                    break;
+        for(let i = 0; i < bNodes.length; i++){
+            for(let j = 0; j < bNodes.length; j++){
+                let found;
+                for (let road of this.bRoads){
+                    if (i !== j && !sortedBRoads.includes(road) && road.nodes.includes(bNodes[i]) && road.nodes.includes(bNodes[j])){
+                        sortedBRoads.push(road);
+                        found = true;
+                        break;
+                    }
                 }
+                if (found) break;
             }
         }
+
+       
+
+    
         this.bRoads = sortedBRoads;
-        // console.log("Roads after")
-        // for(let road of this.bRoads){
-        //     console.log( road.id, ":", road.nodes[0].id, road.nodes[1].id);
- 
      }
 
 
@@ -410,8 +441,6 @@ export class Nbh{
                 endSide = !endSide;
             }
             sides[numSide]?.push(road);
-            //console.log("bRoads", "check the order", this.bRoads)
-            //console.log(sides);
         }
         return sides;
     }
@@ -498,7 +527,6 @@ export class Nbh{
             let iNodes = this.getINodes(false);
             let newPolygon = [];
             for(let node of bNodes){
-                //console.log("nodesss", node)
                 newPolygon.push([node.x, node.y])
             }
             newPolygon.push(newPolygon[0]);
@@ -527,7 +555,6 @@ export class Nbh{
                 let lineBefore = i === 0?  [[newPolygon[newPolygon.length-2][0], newPolygon[newPolygon.length-2][1]], [newPolygon[0][0], newPolygon[0][1]]] : [[newPolygon[i-1][0], newPolygon[i-1][1]], [newPolygon[i][0], newPolygon[i][1]]];
           
                 let lineAfter = i === newPolygon.length-2? [[newPolygon[0][0], newPolygon[0][1]], [newPolygon[1][0], newPolygon[1][1]]] :[[newPolygon[i+1][0], newPolygon[i+1][1]], [newPolygon[i+2][0], newPolygon[i+2][1]]];
-                //console.log("lines", line, lineBefore, lineAfter);
 
                 newPolygon[i] =  this.getLinesIntersections(line, lineBefore);
                 if(i === 0){

@@ -267,7 +267,6 @@ export const OsmImport = ({
                     //setNbhBNodesBoundaries(networkCopy.getNbhBNodesBoundaries(elementsSelected[0]));
                     setIsLoading(0);
                     setStep(2);
-                    console.log(networkCopy);
 
                 })}
                 

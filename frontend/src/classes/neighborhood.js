@@ -69,6 +69,17 @@ export class Nbh{
                     bNodes.push(node);
                     coordinates.push([node.x, node.y])
                 }
+        
+        if (!this.isClosed()){
+            console.log("Is no Closed")
+            let bNodes_ = [];
+            for(let node of bNodes){
+                if(node.isNbhBoundary)
+                    bNodes_.push(node);
+        }
+        return bNodes_;
+
+        }
 
         let center = {
             x: coordinates.reduce((partialSum, a) => partialSum + a[0], 0)/coordinates.length,
@@ -321,12 +332,9 @@ export class Nbh{
     }  
 
     isClosed(){
-        //let nbhBNodes = this.getBNodes();
         let sidesOfNbh =  this.getbRoadsByPolySide();
-        console.log(sidesOfNbh);
         if(sidesOfNbh.length > 2){
             let sideNodes = this.getSideNodes(sidesOfNbh[0]);
-                console.log(sideNodes);
                 for(let bRoad of sidesOfNbh[sidesOfNbh.length-1]){
                     for(let node of bRoad.nodes){
                         if(sideNodes.includes(node))
@@ -396,7 +404,6 @@ export class Nbh{
         let sides = [];
         let oNodes = [];
         let coordinates = [];
-        console.log(this.bRoads);
         for (let road of this.bRoads)
             for (let node of road.nodes)
                 if(!oNodes.includes(node)){

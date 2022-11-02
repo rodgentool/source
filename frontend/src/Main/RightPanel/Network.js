@@ -94,12 +94,12 @@ export const PanelNetwork = ({
     const addRoad = () => {
         //Divide the Road into nbhs (max. 2)
         if(newRoad.length < 2){
-            console.log("PopUp: At leas two points are needed");
+            //console.log("PopUp: At leas two points are needed");
             return;
         }
 
         
-        console.log("Road", newRoad)
+        //console.log("Road", newRoad)
         for(let i = 1; i < newRoad.length; i++){
             if(roadData.road === "bRoad"){
                 if(!newRoad[i-1].nbh && !newRoad[i].nbh){
@@ -150,10 +150,10 @@ export const PanelNetwork = ({
                             
                         }
 
-                        console.log("List", adjList);
-                        console.log("nodes", node1, node2);
+                        // console.log("List", adjList);
+                        // console.log("nodes", node1, node2);
 
-                        console.log(network);
+                        // console.log(network);
                 
 
                         let visited = {}
@@ -166,7 +166,7 @@ export const PanelNetwork = ({
 
                         visited[node1] = true;
                         queue.unshift(node1); 
-                        console.log(queue)
+                        //console.log(queue)
                         while (queue.length !== 0){
                             let visiting = queue.pop();
                             for (let nodeId of adjList[visiting]) {
@@ -188,7 +188,7 @@ export const PanelNetwork = ({
                             route.unshift(node);
                             node = prevNode[node];
                         }
-                        console.log("1Route", route);
+                        //console.log("Route", route)
 
                                 for(let j = 1; j < route.length; j++){
                                     let nodeA = network.nodes[route[j-1]]
@@ -201,12 +201,12 @@ export const PanelNetwork = ({
                                             let sideNodes = involvedNbh.getSideNodes(side);
                                             if(sideNodes.includes(nodeA) && sideNodes.includes(nodeB)){
                                                 for(let road of side){
-                                                    console.log("this should be added", road);
+                                                    //console.log("this should be added", road);
                                                     newRoad[i-1].nbh.addRoadToBRoads(road);
                                                 }
                                             }
                                         }
-                                        console.log(newRoad[i-1].nbh.getBNodes())
+                                        //console.log(newRoad[i-1].nbh.getBNodes())
                                     }
                                   
                                 }
@@ -255,7 +255,7 @@ export const PanelNetwork = ({
                         let lineAPoint1 = [sharedRoad.nodes[k-1].x, sharedRoad.nodes[k-1].y];
                         let lineAPoint2 = [sharedRoad.nodes[k].x, sharedRoad.nodes[k].y];
                         let intersectionPoint = intersectionTwoLinesSegments(lineAPoint1, lineAPoint2, lineBPoint1, lineBPoint2, roadLineWidth);
-                        console.log("intersectionPoint", intersectionPoint)
+                        //console.log("intersectionPoint", intersectionPoint)
                         if(intersectionPoint){
                             if (distanceBetween2Points(intersectionPoint, newRoad[i-1].point) < roadLineWidth){
                                 newRoads[newRoad[i-1].nbh.id] = newRoad.slice(j, i)
@@ -327,7 +327,7 @@ export const PanelNetwork = ({
             }
         }
 
-        console.log(newRoads);
+        //console.log(newRoads);
 
         //Constrains
         for(let newRoadNbh in newRoads){
@@ -335,12 +335,12 @@ export const PanelNetwork = ({
             let conPoint1 = newRoads[newRoadNbh][0];
             let conPoint2 =  newRoads[newRoadNbh][ newRoads[newRoadNbh].length-1];
             if(conPoint1.type === "" && conPoint2.type === "" && Object.values(network.nbhs).length > 1){
-                console.log("PopUp: At least one connection point must be connected to the Network");
+                //console.log("PopUp: At least one connection point must be connected to the Network");
                 return;
             }else if(roadData.road !== "bRoad" && (conPoint1.type === "oNode" || conPoint2.type === "oNode")){
                 let otherType = conPoint1.type === "oNode"? conPoint2.type: conPoint1.type;
                 if(otherType === "oNode" || otherType === "bRoad"){
-                    console.log("The backbone can only be connected to the internal network");
+                    //console.log("The backbone can only be connected to the internal network");
                     return;
                 }
             }else if(roadData.road !== "bRoad" && (conPoint1.type === "bRoad" || conPoint2.type === "bRoad")){
@@ -351,7 +351,7 @@ export const PanelNetwork = ({
                         if(nbh.bRoads.length === 0)
                             network.deleteNbh(nbh);
                     }
-                    console.log("The backbone can only be connected to the internal network");
+                    //console.log("The backbone can only be connected to the internal network");
                     return;
                 }
             }else if(roadData.road === "bRoad" && !(!(conPoint1.type === "oNode" && conPoint2.type === "oNode") || !(conPoint1.type === "bRoad" && conPoint2.type === "bRoad") || !(conPoint1.type === "oNode" && conPoint2.type === "bRoad") || !(conPoint1.type === "bRoad" && conPoint2.type === "oNode") || !(conPoint1.type === "oNode" && conPoint2.type === "") || !(conPoint1.type === "" && conPoint2.type === "oNode"))){
@@ -360,7 +360,7 @@ export const PanelNetwork = ({
                         if(nbh.bRoads.length === 0)
                             network.deleteNbh(nbh);
                     }
-                    console.log("PopUp: Both points muss be connected to the backbone");
+                    //console.log("PopUp: Both points muss be connected to the backbone");
                     return;
                 }
          //Missing that cNodes should also not be included in the last 2 posibilities. 
@@ -368,7 +368,7 @@ export const PanelNetwork = ({
 
         //If the restrictions were passed, the road can be added
 
-        console.log(newRoads);
+        //console.log(newRoads);
 
         if(roadData.road === "bRoad"){
             for(let newRoadNbh in newRoads){
@@ -401,22 +401,12 @@ export const PanelNetwork = ({
                     }
                 }
 
-
-
                 let newRoad = network.addRoad(newRoadNodes, network.roadTypes.types[roadData.type], roadData.direction, true);
-                console.log("important", network.nbhs[newRoadNbh]);
-
-                console.log("HEY", !network.nbhs[newRoadNbh].isClosed());
-                
 
                 if (!network.nbhs[newRoadNbh].isClosed()){
-                    console.log("INSIDE!")
                     network.nbhs[newRoadNbh].addRoadToBRoads(newRoad);
                     
-
-                    //consigue los vecundarios que estan relacionados.
                     let bNodes = network.nbhs[newRoadNbh].getBNodes();
-                    
                     let standAloneNodes = [];
                     for(let node of bNodes){
                         let count = 0;
@@ -431,7 +421,7 @@ export const PanelNetwork = ({
                         }
                     }
                     
-                    console.log("StandAlone", standAloneNodes);
+                    //console.log("StandAlone", standAloneNodes);
 
                     let mapNodeWithNbh = {}
                     for(let standAloneNode of standAloneNodes){
@@ -455,7 +445,6 @@ export const PanelNetwork = ({
 
 
                     if(canBeClosed){
-                        console.log("can be closed")
                         if(standAloneNodes.length > 1){
                         let involvedNbhs = []
                         for(let nodeId in mapNodeWithNbh){
@@ -491,11 +480,11 @@ export const PanelNetwork = ({
 
                         let queue = []
 
-                        console.log("List", adjList, standAloneNodes)
+                        //console.log("List", adjList, standAloneNodes)
 
                         visited[standAloneNodes[0].id] = true;
                         queue.unshift(standAloneNodes[0].id); 
-                        console.log(queue)
+                        //console.log(queue)
                         while (queue.length !== 0){
                             let visiting = queue.pop();
                             for (let nodeId of adjList[visiting]) {
@@ -537,19 +526,11 @@ export const PanelNetwork = ({
                 }
                     
 
-
-
-
-                
-                    
-
-
                 }else{
                     network.divideNbhByRoad(newRoad, network.nbhs[newRoadNbh]);
-                    console.log("divide!")
                 }
-                console.log(network.nbhs[newRoadNbh]);
-                console.log(network);
+                // console.log(network.nbhs[newRoadNbh]);
+                // console.log(network);
 
 
 

@@ -47,7 +47,6 @@ export const NbhEdit = ({
             connections: {
                 custom: {
                 isValid: (value) => {
-                    console.log(value);
                     let sum = value.reduce((a, b) => a + b, 0);
                     if(sum > 0 || !innerNetBBox)
                         return true;

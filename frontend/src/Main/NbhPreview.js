@@ -160,19 +160,15 @@ export const NbhPreview = ({
                     polygon.push([bNode.x, bNode.y])
                 let polyCenter = polygonCentroid(polygon);
                 //console.log(polyCenter);
-                console.log(node.x)
                 if(node.x > polyCenter[0]){
-                    console.log(node.x, 1)
                     newScaleX = scaleLinear().domain([minXOBox, node.x]).range([minXOBox, newPos.x])
                 } else{
-                    console.log(node.x, 2)
                     newScaleX = scaleLinear().domain([node.x, maxXOBox]).range([newPos.x, maxXOBox])
                 }
                 
                 if(node.y > polyCenter[1]){
                     newScaleY = scaleLinear().domain([minYOBox, node.y]).range([minYOBox, newPos.y])
                 } else{
-                    console.log(node.y, 4)
                     newScaleY = scaleLinear().domain([node.y, maxYOBox]).range([newPos.y, maxYOBox])
                 }
 
@@ -252,7 +248,6 @@ export const NbhPreview = ({
                 drawNbhBackbone(transform);
                 if(onChangeInnerNetBBox?.coordinates)
                     onChangeInnerNetBBox([...onChangeInnerNetBBox.coordinates]);
-                console.log("was")
             }
 
             onChangeNetwork(Object.assign(Object.create(Object.getPrototypeOf(network)), network));

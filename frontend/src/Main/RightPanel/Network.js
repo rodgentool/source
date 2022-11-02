@@ -334,7 +334,6 @@ export const PanelNetwork = ({
             if(newRoads[newRoadNbh].length === 1){ continue;}
             let conPoint1 = newRoads[newRoadNbh][0];
             let conPoint2 =  newRoads[newRoadNbh][ newRoads[newRoadNbh].length-1];
-            console.log(Object.values(network.nbhs).length, network.nbhs);
             if(conPoint1.type === "" && conPoint2.type === "" && Object.values(network.nbhs).length > 1){
                 console.log("PopUp: At least one connection point must be connected to the Network");
                 return;

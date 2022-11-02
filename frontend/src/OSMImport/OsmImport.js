@@ -91,11 +91,9 @@ export const OsmImport = ({
                         scaledPolygon.push([rescaleLon(latLonPoint[1]), rescaleLat(latLonPoint[0])])
                     }
 
-                    console.log("here", scaledPolygon);
                     //resize Polyigon to actual content
                     let resizedPolygonToContent = getInnerBoundaryBox(scaledPolygon, osmData.nodes);
                     
-                    console.log("Polygons", scaledPolygon, resizedPolygonToContent)
 
                     let scaledPolyMinX = min(scaledPolygon, d => d[0]);
                     let scaledPolyMinY  = min(scaledPolygon, d => d[1]);
@@ -103,8 +101,6 @@ export const OsmImport = ({
                     let reScaledPolyMinY  = min(resizedPolygonToContent, d => d[1]);
                     let reScaledPolyMaxX = max(resizedPolygonToContent, d => d[0]);
                     let reScaledPolyMaxY  = max(resizedPolygonToContent, d => d[1]);
-                    
-                    //neww!!!!
 
                     //Change the size of the backbone
                     let prevOuterWidth =  nbhBoundaryMaxX - nbhBoundaryMinX;
@@ -112,7 +108,6 @@ export const OsmImport = ({
                     let newOuterWidth = roundTo2(reScaledPolyMaxX-reScaledPolyMinX + (marginInnerNet.x * 2));
                     let newOuterHeight =  roundTo2(reScaledPolyMaxY-reScaledPolyMinY + (marginInnerNet.y * 2));
 
-                    console.log("values", prevOuterWidth, prevOuterHeight, "after", newOuterWidth, newOuterHeight)
 
                     let bNodes_ = nbhSelected.getBNodes();
                     let maxX = max(bNodes_, node => node.x)
@@ -194,7 +189,6 @@ export const OsmImport = ({
                     }
 
                     let diffY = newOuterHeight - prevOuterHeight;
-                    console.log("difference", diffY);
 
                     if(diffY !== 0){
                         let nodesToBeScaled = [];
@@ -209,7 +203,7 @@ export const OsmImport = ({
                                         nodesToBeScaled.push(oNode);
                                 }
                                 for(let iNode of iNodes){
-                                    if(iNode.y > maxY)
+                                    if(iNode.y > minY)
                                         iNode.y = iNode.y + (diffY/2);
 
                                 }
@@ -285,7 +279,7 @@ export const OsmImport = ({
 
     const handleStep02 = () => {
 
-        //Copy the inner Net to to the other selected nbhs (Actual contrain: working only for nbhs with same form)
+        //Copy the inner Net to to the other selected nbhs (Actual constrain: working only for nbhs with same form)
         let firstNbh = networkCopy.nbhs[elementsSelected[0].id];
         let fNbhbNodes = firstNbh.getBNodes();
         let fNbhMinX = min(fNbhbNodes, node => node.x)
@@ -501,7 +495,8 @@ export const OsmImport = ({
 
 
     return(
-        <><TabContent display={step === 1}>
+        <>
+        <TabContent display={step === 1}>
             <div className="map_container">
                 <div className="container-title">Open Street Map <small>(Step {step} of 2)</small></div>
                 <div className="exit" onClick={() => onChangeView("import")}>X</div>
@@ -559,9 +554,8 @@ export const OsmImport = ({
                 handlePrev={handlePrev}
                 handleNext={(size, mapCenter) => handleStep02(size, mapCenter)}
                 btn02={'Import'} 
-                btn01={'Previus'}/>
+                btn01={'Previous'}/>
         </TabContent>
-        </>
-          
+        </>     
     )
 }

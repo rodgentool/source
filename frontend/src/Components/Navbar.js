@@ -1,4 +1,6 @@
 import React from "react";
+import logo from '../imgs/logo_v02.png'; 
+import gitHublogo from '../imgs/GitHub-Logo.png'; 
 
 export const Navbar = ({children, active, onChangeIsNavActive, contextMenu, onChangeContextMenu}) => {
     
@@ -12,7 +14,13 @@ export const Navbar = ({children, active, onChangeIsNavActive, contextMenu, onCh
 
     return (
         <nav className="navbar">
+            <a href="/">
+                <img src={logo} className='header_img01 my-auto mx-3 h-50'/>
+            </a>
             <ul className="navbar-nav" >{childrenWithProps}</ul>
+            <a href="https://github.com/rodgentool/source" target="_blank" className="ml-auto">
+                    <img src={gitHublogo} className='header_img02 h-65'/>
+                </a>
         </nav>
     );
 }
@@ -35,6 +43,7 @@ export const NavbarItem = ({name, children, navActive, onChangeNavActive,  activ
     }
 
     return (
+
         <li className="navbar-item" onMouseEnter={onMouseEnter}>
             <div className="navbar-item" onClick={handleClick}>
                 {name}

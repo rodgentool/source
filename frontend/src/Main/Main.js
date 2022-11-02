@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from "react";
 import '../Style/Main.css';
-import {Header} from '../Components/Header';
 import { OsmImport } from '../OSMImport/OsmImport';
 import { MainNavbar } from "./MainNavbar";
 import { CanvasContainer } from './CanvasContainer';
@@ -304,7 +303,7 @@ export const Main = ({
             
                                 setNetworkCopy(Object.assign(Object.create(Object.getPrototypeOf(newNetwork)), newNetwork));
                                 //setNbhBNodesBoundaries(networkCopy.getNbhBNodesBoundaries(elementsSelected[0]));
-                                setActivePopUp("editNbh");
+                                setActivePopUp("ImportNbh");
                                 console.log(newNetwork);
                         
                                 })
@@ -373,6 +372,7 @@ ${networkToString}
     const handleImportType = (e) => {
         setTypeImport(e.target.value);
    }
+
 
  
     //OK
@@ -514,8 +514,7 @@ ${networkToString}
         
     }
 
-    //TO-DO
-    const handleEditNbh = () => {
+    const handleImportNbh = () => {
             let firstNbh = networkCopy.nbhs[elementsSelected[0].id];
             let fNbhbNodes = firstNbh.getBNodes();
             let fNbhMinX = min(fNbhbNodes, node => node.x)
@@ -722,6 +721,124 @@ ${networkToString}
     onChangeNetwork(Object.assign(Object.create(Object.getPrototypeOf(networkCopy)), networkCopy));
     setNetworkCopy(null);
     setActivePopUp(false);
+    }
+
+    const handleEditNbh = () => {
+        let copyNbh = networkCopy.nbhs[elementsSelected[0].id];
+        let copyNbhBNodes = copyNbh.getBNodes();
+        let copyNbhONodes = copyNbh.getONodes();
+        let copyNbhMinX = min(copyNbhBNodes, node => node.x)
+        let copyNbhMinY = min(copyNbhBNodes, node => node.y)
+        let copyNbhMaxX = max(copyNbhBNodes, node => node.x)
+        let copyNbhMaxY = max(copyNbhBNodes, node => node.y)
+        let newOuterWidth = copyNbhMaxX - copyNbhMinX;
+        let newOuterHeight = copyNbhMaxY - copyNbhMinY;
+        
+        let originalNbh = elementsSelected[0];
+        let originalBNodes = originalNbh.getBNodes();
+        let originalNbhMinX = min(originalBNodes, node => node.x)
+        let originalNbhMinY = min(originalBNodes, node => node.y)
+        let originalNbhMaxX = max(originalBNodes, node => node.x)
+        let originalNbhMaxY = max(originalBNodes, node => node.y)
+        let prevOuterWidth = originalNbhMaxX - originalNbhMinX;
+        let prevOuterHeight = originalNbhMaxY - originalNbhMinY;
+
+
+        let scaleX = scaleLinear().domain([originalNbhMinX, originalNbhMaxX]).range([copyNbhMinX, copyNbhMaxX]);
+
+        let scaleY = scaleLinear().domain([originalNbhMinY, originalNbhMaxY]).range([copyNbhMinY, copyNbhMaxY]);
+        
+        let [affectedNbhsX, affectedNbhsY] = getAffectedNbhs(copyNbh, networkCopy, scaleX, scaleY);
+        console.log(affectedNbhsX, affectedNbhsY);
+
+        //X Achse
+        let diffX = newOuterWidth - prevOuterWidth;
+
+            if(diffX !== 0){
+                let nodesToBeScaled = [];
+                let nodesToBeTrasnlated = [];
+                for(let nbhId in networkCopy.nbhs){
+                    let nbh_ = networkCopy.nbhs[nbhId];
+                    let oNodes =nbh_.getONodes();
+                    let iNodes = nbh_.getINodes(false);
+                    if(affectedNbhsX.includes(nbh_) && nbh_ !== copyNbh){
+                        for(let oNode of oNodes){
+                            console.log(oNode.x)
+                            if(!nodesToBeScaled.includes(oNode) && !copyNbhONodes.includes(oNode))
+                                nodesToBeScaled.push(oNode);
+                        }
+                        for(let iNode of iNodes){
+                            if(iNode.x > originalNbhMinX)
+                                iNode.x = iNode.x + (diffX/2);
+
+                        }
+                    }
+                    else{
+                        for(let oNode of oNodes){
+                            if(!nodesToBeTrasnlated.includes(oNode) && !copyNbhONodes.includes(oNode) && oNode.x > originalNbhMaxX)
+                                nodesToBeTrasnlated.push(oNode);
+                        }
+                        for(let iNode of iNodes){
+                            if(iNode.x > originalNbhMaxX)
+                                iNode.x = iNode.x + diffX;
+                        }
+                    }
+                }
+
+            for(let node of nodesToBeScaled)
+                node.x = scaleX(node.x);
+
+            for(let node of nodesToBeTrasnlated)
+                node.x = node.x + diffX;
+        
+            }
+
+            //Y Achse
+            let diffY = newOuterHeight - prevOuterHeight;
+
+            if(diffY !== 0){
+                let nodesToBeScaled = [];
+                let nodesToBeTrasnlated = [];
+                for(let nbhId in networkCopy.nbhs){
+                    let nbh_ = networkCopy.nbhs[nbhId];
+                    let oNodes =nbh_.getONodes();
+                    let iNodes = nbh_.getINodes(false);
+                    if(affectedNbhsY.includes(nbh_) && nbh_ !== copyNbh){
+                        for(let oNode of oNodes){
+                            console.log(oNode.y)
+                            if(!nodesToBeScaled.includes(oNode) && !copyNbhONodes.includes(oNode))
+                                nodesToBeScaled.push(oNode);
+                        }
+                        for(let iNode of iNodes){
+                            if(iNode.y > originalNbhMinY)
+                                iNode.y = iNode.y + (diffY/2);
+
+                        }
+                    }
+                    else{
+                        for(let oNode of oNodes){
+                            if(!nodesToBeTrasnlated.includes(oNode) && !copyNbhONodes.includes(oNode) && oNode.y > originalNbhMaxY)
+                                nodesToBeTrasnlated.push(oNode);
+                        }
+                        for(let iNode of iNodes){
+                            if(iNode.y > originalNbhMaxY)
+                                iNode.y = iNode.y + diffY;
+
+                        }
+                    }
+                }
+
+            for(let node of nodesToBeScaled)
+                node.y = scaleY(node.y);
+
+            for(let node of nodesToBeTrasnlated)
+                node.y = node.y + diffY;
+        }
+        
+        networkCopy.calculateSize();
+        onChangeNetwork(Object.assign(Object.create(Object.getPrototypeOf(networkCopy)), networkCopy));
+        setNetworkCopy(null);
+        setActivePopUp(false);
     }
 
     const handleDeleteInternalNet = () => {
@@ -980,7 +1097,6 @@ ${networkToString}
 
     return (
         <>
-        <Header></Header>
         <div onClick={handleClick}>
             <MainNavbar 
                 isNavActive={isNavActive}
@@ -1144,6 +1260,25 @@ ${networkToString}
             </div></div>
             </PopUp>
 
+            <PopUp display={activePopUp === "ImportNbh"}>
+                <NbhEdit
+                    title={"Edit Neighborhood"}
+                    outerNodeRadius={outerNodeRadius}
+                    innerNodeRadius={innerNodeRadius}
+                    outerLineWidth={outerLineWidth}
+                    innerLineWidth={innerLineWidth}
+                    handleCancel={handleCancel}
+                    network={networkCopy}
+                    onChangeNetwork={setNetworkCopy}
+                    nbhSelected={elementsSelected && elementsSelected[0]?.hasOwnProperty('bRoads')? networkCopy?.nbhs[elementsSelected[0].id]: null}
+                    globalScale={scale}
+                    handlePrev={handleCancel}
+                    minNbhSize={minNbhSize}
+                    handleNext={handleImportNbh}
+                    btn02={"Import"}
+                    btn01={"Cancel"} />
+            </PopUp>
+
             <PopUp display={activePopUp === "editNbh"}>
                 <NbhEdit
                     title={"Edit Neighborhood"}
@@ -1159,7 +1294,7 @@ ${networkToString}
                     handlePrev={handleCancel}
                     minNbhSize={minNbhSize}
                     handleNext={handleEditNbh}
-                    btn02={"Import"}
+                    btn02={"Change"}
                     btn01={"Cancel"} />
             </PopUp>
             {handleFilesPopUps()}

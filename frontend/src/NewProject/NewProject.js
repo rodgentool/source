@@ -1,6 +1,5 @@
 import '../Style/NewProject.css';
 import React, { useEffect, useState } from 'react';
-import {Header} from '../Components/Header';
 import { Options } from './Options';
 import { Preview } from './Preview';
 import { Topology } from './Topology';
@@ -167,12 +166,10 @@ export const NewProject = ({
                                     url: url + "/backboneFromGr/",
                                     data: jsonNet
                                 }).then((res) => {
-                                    console.log("cicles", res);
                                     
                                     let nodesSet = new Set();
                                     for (const cycle of res.data)
                                         cycle.forEach(element => nodesSet.add(Number(element)))
-                                    console.log(nodesSet);
     
                                     let factorToOriginalCoord = 0;
                                     if (roads[id-1]){
@@ -264,12 +261,12 @@ export const NewProject = ({
                                                         nbhRoads.push(road);
                                                     }  
                                                 }
-                                                console.log(nbhRoads);
+                                                //console.log(nbhRoads);
                                                 newNetwork.addNbh(nbhRoads);
                                         }
                                     }
 
-                                    console.log(newNetwork);
+                                    //console.log(newNetwork);
                                     onChangeNetwork(newNetwork);
                                     onChangeView('main');
                              
@@ -281,9 +278,6 @@ export const NewProject = ({
                     
                     }
 
-
-
-                    console.log(grData);
                 })});
         }
     }
@@ -306,7 +300,6 @@ export const NewProject = ({
 
     return (
     <>
-        <Header></Header>
         <div className='wrapperBody'>
             <div className='containerRound container-newProject'>
                 <div className="container-title">New Project</div>

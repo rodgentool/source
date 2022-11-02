@@ -94,7 +94,7 @@ export class Nbh{
         let current = bNodes[1];
         let sortedBNodes =[startNode, current];
         let i = 0;
-        while(current !== startNode || i > bNodes.length*2){
+        while(current !== startNode && i < bNodes.length*2){
             for(let node of adjList[current.id]){
                 i++;
                 if (!sortedBNodes.includes(node)){
@@ -112,7 +112,7 @@ export class Nbh{
                 bNodes.push(node);
                 
         }
-        return sortedBNodes;
+        return bNodes;
     }
 
 
@@ -274,7 +274,6 @@ export class Nbh{
             let maxX = max(innerPolygon, point => point[0]);
             let minY = min(innerPolygon, point => point[1]);
             let maxY = max(innerPolygon, point => point[1]);
-            //console.log(innerPolygon);
 
             for(let i = 0; i < innerPolygon.length; i++){
                 let point = innerPolygon[i];
@@ -289,6 +288,9 @@ export class Nbh{
             }
 
             let sides = this.getbRoadsByPolySide();
+
+            //console.log(boundariesI);
+
 
             for(let i = 0; i < boundariesI.length; i++){
                 let pointA = sides[boundariesI[i]][0].nodes.find(node => node.isNbhBoundary);
@@ -321,9 +323,10 @@ export class Nbh{
     isClosed(){
         //let nbhBNodes = this.getBNodes();
         let sidesOfNbh =  this.getbRoadsByPolySide();
-
+        console.log(sidesOfNbh);
         if(sidesOfNbh.length > 2){
             let sideNodes = this.getSideNodes(sidesOfNbh[0]);
+                console.log(sideNodes);
                 for(let bRoad of sidesOfNbh[sidesOfNbh.length-1]){
                     for(let node of bRoad.nodes){
                         if(sideNodes.includes(node))
@@ -390,60 +393,81 @@ export class Nbh{
     }
 
     getbRoadsByPolySide(){
-        let bRoads = [...this.bRoads];
         let sides = [];
-        let numSide = -1;
-        let endSide = false;
-        let fisrtBundary = false;
+        let oNodes = [];
+        let coordinates = [];
+        console.log(this.bRoads);
+        for (let road of this.bRoads)
+            for (let node of road.nodes)
+                if(!oNodes.includes(node)){
+                    oNodes.push(node);
+                    coordinates.push([node.x, node.y])
+                }
 
-        //bRoad closer to point (0,0);
-        let bNodes = this.getBNodes();
-        let node;
-        let distance;
-        for(let i = 0; i < bNodes.length; i++){
-            let dist = bNodes[i].distanceToNode({x:0, y:0})
-            if(i === 0){
-                node = bNodes[0];
-                distance = dist;
-            }else if(distance > dist){
-                node = bNodes[i];
-                distance = dist;
+        if(oNodes.length <= 0){
+            return [];
+        }
+
+        let center = {
+            x: coordinates.reduce((partialSum, a) => partialSum + a[0], 0)/coordinates.length,
+            y: coordinates.reduce((partialSum, a) => partialSum + a[1], 0)/coordinates.length
+        }
+
+        this.sortNodesCounterclockwise(center, oNodes);
+    
+        let adjList = {};
+        for (let road of this.bRoads){
+            let nodes = road.nodes
+            adjList[nodes[0].id] = []
+            adjList[nodes[nodes.length-1].id] = []
+        }
+
+        for (let road of this.bRoads){
+            let nodes = road.nodes
+                adjList[nodes[0].id].push(nodes[nodes.length-1])
+                adjList[nodes[nodes.length-1].id].push(nodes[0])
+        }
+
+        let startNode = oNodes[0];
+        let current = oNodes[1];
+        let sortedNodes =[startNode, current];
+        let i = 0;
+        while(current !== startNode && i < oNodes.length*2){
+            for(let node of adjList[current.id]){
+                i++;
+                if (!sortedNodes.includes(node)){
+                    sortedNodes.push(node);
+                    current = node;
+                }
+                if(node === startNode)
+                    current = node;
             }
         }
 
-        for (let i = 0; i < bRoads.length; i++){
-            let numOfBNodes = bRoads[i].numOfBoundaryNodes();
-            if(!fisrtBundary){
-            if(numOfBNodes === 0 || !bRoads[i].nodes.includes(node)){
-                bRoads.push(bRoads.splice(i,1)[0]);
+        for(let i=0; i < sortedNodes.length-1; i++){
+            if (i === 0 && !sortedNodes[i].isNbhBoundary){
+                sortedNodes.push(sortedNodes.splice(0, 1)[0]);
                 i--;
-                continue;
-            }else{
-                if(numOfBNodes >= 1 && bRoads[i+1]?.numOfBoundaryNodes() >= 1){
-                    let node1 = bRoads[i].nodes.find(node_ => node_.isNbhBoundary && node_ === node);
-                    let node2 = bRoads[i+1].nodes.find(node_ => node.isNbhBoundary && node_ === node);
-                    if(node1 === node2)
-                        bRoads.push(bRoads.splice(i,1)[0]);
-                }
-                fisrtBundary = true;
             }
-                
         }
-            
-            let road = bRoads[i];
-            numOfBNodes = bRoads[i].numOfBoundaryNodes();
-            if(numOfBNodes > 0){
-                if(!endSide){
-                    sides.push([]);
-                    numSide++;
-                }
-                if(numOfBNodes === 1)
-                endSide = !endSide;
-            }
-            sides[numSide]?.push(road);
+
+        sortedNodes.push(sortedNodes[0]);
+
+        for(let i=0; i < sortedNodes.length-1; i++){
+            let node = sortedNodes[i];
+            let nextNode = sortedNodes[i+1];
+            if(node.isNbhBoundary)
+                sides.push([]);
+            for(let road of this.bRoads){
+                if(road.nodes.includes(node) && road.nodes.includes(nextNode))
+                    sides[sides.length-1].push(road);
+            } 
         }
         return sides;
+        
     }
+
+    
 
     getSidePoints(roadsBySide, index){
         let side = roadsBySide[index];
@@ -475,26 +499,6 @@ export class Nbh{
         let maxY = max(nodes, node => node.y)
         return{minX: minX, maxX: maxX, minY: minY, maxY: maxY}
     }
-
-    //
-    // getInnerBoundaryBox(){
-    //     if(this.iRoads.length > 0){
-    //         let bNodes = this.getBNodes();
-    //         let iNodes = this.getINodes();
-    //         let minMaxBNodes = this.getMinMaxCoord(bNodes);
-    //         let minMaxINodes = this.getMinMaxCoord(iNodes);
-
-    //         let rescaleX = scaleLinear().domain([minMaxBNodes.minX, minMaxBNodes.maxX]).range([minMaxINodes.minX, minMaxINodes.maxX])
-    //         let rescaleY = scaleLinear().domain([minMaxBNodes.minY, minMaxBNodes.maxY]).range([minMaxINodes.minY, minMaxINodes.maxY])
-
-    //         let polygon = [];
-    //         for(let bNode of bNodes){
-    //             polygon.push([rescaleX(bNode.x), rescaleY(bNode.y)])
-    //         }
-    //         return polygon;
-    //     }
-    //     return null;
-    // }
 
     drawBackbone(ctx, scaleX, scaleY, oNodeRadius, iNodeRadius, oRoadLineWidth){
         let oNodes = this.getONodes();
@@ -545,17 +549,17 @@ export class Nbh{
                         node = iNodes[j];
                     }
                 }
-
+   
                 let pointOnLine = node.calculatePerpendicularPoint([[newPolygon[i][0], newPolygon[i][1]], [newPolygon[i+1][0], newPolygon[i+1][1]]]);
                 let diffX = node.x - pointOnLine[0];
                 let diffY = node.y - pointOnLine[1];
-                
+            
                 let line = [[node.x, node.y], [newPolygon[i][0] + diffX, newPolygon[i][1] + diffY]]
            
                 let lineBefore = i === 0?  [[newPolygon[newPolygon.length-2][0], newPolygon[newPolygon.length-2][1]], [newPolygon[0][0], newPolygon[0][1]]] : [[newPolygon[i-1][0], newPolygon[i-1][1]], [newPolygon[i][0], newPolygon[i][1]]];
           
                 let lineAfter = i === newPolygon.length-2? [[newPolygon[0][0], newPolygon[0][1]], [newPolygon[1][0], newPolygon[1][1]]] :[[newPolygon[i+1][0], newPolygon[i+1][1]], [newPolygon[i+2][0], newPolygon[i+2][1]]];
-
+                
                 newPolygon[i] =  this.getLinesIntersections(line, lineBefore);
                 if(i === 0){
                     newPolygon[newPolygon.length-1] = newPolygon[0];
@@ -569,7 +573,7 @@ export class Nbh{
 
             }
             newPolygon.pop();
-        //console.log(newPolygon);
+        //console.log("getInnerBoundaryBox", newPolygon);
         return newPolygon;
     } else 
     return null;

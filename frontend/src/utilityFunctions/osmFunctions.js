@@ -290,7 +290,6 @@ export const getInnerBoundaryBox = (polygon, nodes) =>{
         let y4 = line2[1][1]
         let d = (x1-x2)*(y3-y4)-(y1-y2)*(x3-x4);
         if (d === 0){
-            console.log("i am here")
             return [0, 0];
         }
         let px = ((x1*y2-y1*x2)*(x3-x4)-(x1-x2)*(x3*y4-y3*x4))/d;
@@ -313,7 +312,6 @@ export const getInnerBoundaryBox = (polygon, nodes) =>{
                     node = iNodes[j];
                 }
         }
-        console.log("is a node?", node)
 
         let pointOnLine = calculatePerpendicularPoint([[newPolygon[i][0], newPolygon[i][1]], [newPolygon[i+1][0], newPolygon[i+1][1]]], node);
         
@@ -321,8 +319,6 @@ export const getInnerBoundaryBox = (polygon, nodes) =>{
         let diffY = node.y - pointOnLine[1];
         
         let line = [[node.x, node.y], [newPolygon[i][0] + diffX, newPolygon[i][1] + diffY]]
-
-        console.log("line", line, node, pointOnLine)
 
         let lineBefore = i === 0?  [[newPolygon[newPolygon.length-2][0], newPolygon[newPolygon.length-2][1]], [newPolygon[0][0], newPolygon[0][1]]] : [[newPolygon[i-1][0], newPolygon[i-1][1]], [newPolygon[i][0], newPolygon[i][1]]];
 
@@ -342,7 +338,6 @@ export const getInnerBoundaryBox = (polygon, nodes) =>{
         }
 }
 newPolygon.pop();
-console.log("Osm", newPolygon);
 return newPolygon;
 }
 
@@ -426,10 +421,6 @@ export const getAffectedNbhs = (startNbh, network, scaleX, scaleY) => {
             } 
 
         }
-
     }
-
-    console.log("Affected Nbhs", affectedNbhsX, affectedNbhsX);
     return [affectedNbhsX, affectedNbhsY];
-
 }

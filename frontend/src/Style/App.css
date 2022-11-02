@@ -22,7 +22,7 @@ select {
 
 /*Before warpper*/
 .wrapperBody {
-  height: calc(100vh - 49px);
+  height: calc(100vh - 16px);
   display: flex;
 }
 /*Before container*/
@@ -160,6 +160,11 @@ select {
   margin-bottom: 50px;
 }
 
+.mx-3 {
+    margin-left: 15px;
+    margin-right: 15px;
+  }
+
 .mx-4 {
   margin-left: 20px;
   margin-right: 20px;
@@ -184,6 +189,10 @@ select {
     margin-left: 70px;
     margin-right: 70px;
   }
+
+.ml-3 {
+    margin-left: 15px;
+  }
   
 
 .pb-ex3 {
@@ -196,4 +205,24 @@ select {
 
 .direction-reverse{
     direction: rtl;
+}
+
+.ml-auto{
+    margin-left:auto;
+}
+
+.width-100{
+    width: 100%;
+}
+
+.h-100{
+    height: 100%;
+}
+
+.h-50{
+    height: 50%;
+}
+
+.h-65{
+    height: 65%;
 }

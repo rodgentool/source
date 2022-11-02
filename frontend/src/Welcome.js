@@ -1,5 +1,4 @@
 import logo from './imgs/Logo.png'; 
-import {Header} from './Components/Header';
 
 /**
  * Start View
@@ -28,7 +27,6 @@ export const Welcome = ({onChangeView, onChangeOpenProject}) => {
 
     return (
     <>
-        <Header></Header>
         <div className='wrapperBody'>
             <div className='containerRound'>
                 <h2 className="mt-0 mb-10 mx-14 wellcome"><img src={logo} alt="RODGEN"></img></h2>

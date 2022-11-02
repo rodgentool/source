@@ -97,7 +97,6 @@ export class Network{
     deleteRoad(road, type, nbh, clearNbh=false){
         //For backbone Roads is not needed to give a nbh
         let cNodes = nbh.getCNodes();
-
         if(type === 'bRoad'){
             let sharedNbhs = this.getBRoadSharedNbhs(road);
             for(let nbh_ of sharedNbhs){
@@ -107,14 +106,14 @@ export class Network{
         else {nbh.deleteRoad(type, road);}
         this.roadTypes.types[road.type.id].decrement();
         delete this.roads[road.id];
-
+  
         //Delete Nodes
         for(let rNode of road.nodes){
             if (rNode.isIntersection){
                 if (clearNbh && (type === 'iRoad' || (type === 'cRoad' && !cNodes.includes(rNode)))){
                     delete this.nodes[rNode.id]
                 }
-                   
+                
                 else if(!this.isIntersectionShared(rNode, road, type, nbh)){
                     //Used to delete the connection
                     if (type === 'cRoad' &&  cNodes.includes(rNode) ){
@@ -125,11 +124,13 @@ export class Network{
                         }
                         //console.log(bRoadsSharingrNode[0], bRoadsSharingrNode[1])
                         this.merge2BRoadsOnNode(bRoadsSharingrNode[0], bRoadsSharingrNode[1], rNode, nbh);
-                    } else if(clearNbh || type !== 'bRoad')
+                    } else if(clearNbh || type !== 'bRoad'){
                        delete this.nodes[rNode.id];
+                    }
                 }
-            } else 
+            } else {
                 delete this.nodes[rNode.id];
+            }
         }
     }
 
@@ -146,12 +147,14 @@ export class Network{
                 return true;
 
             for(let nbhId in this.nbhs){
+             
                 let nbh_ = this.nbhs[nbhId];
                 if(nbh_ === nbh) continue;
                 else if(nbh_.getCNodes().includes(node))
                     return true;
             }
         }else{
+
             let iRoads = nbh.cRoads.concat(nbh.iRoads);
             for(let road_ of iRoads){
                 if (road_ !== road && road_.nodes.includes(node)){
@@ -326,7 +329,6 @@ export class Network{
                 sharedNbhs.push(nbh);
             }
         }
-        console.log(sharedNbhs);
         return sharedNbhs;
     }
 
@@ -803,7 +805,6 @@ export class Network{
     }
 
     copy(){
-        //console.log(this);
         let networkCopy =  new Network();
         networkCopy.topology = this.topology;
         networkCopy.size = {w: this.size.w, h: this.size.h}
@@ -897,6 +898,8 @@ export class Network{
         let roadsTop = null;
         for(let id in this.nbhs){
             let nbhSides = this.nbhs[id].getbRoadsByPolySide();
+            nbhSides.unshift(nbhSides.pop());
+            nbhSides.unshift(nbhSides.pop());
                 for (let road of nbhSides[2]){
                     for(let node of road.nodes){
                         if (node.x === maxX){
@@ -930,7 +933,8 @@ export class Network{
         let roadsLeft = null;
         for(let id in this.nbhs){
             let nbhSides = this.nbhs[id].getbRoadsByPolySide();
-            //console.log("Sides", nbhSides)
+            nbhSides.unshift(nbhSides.pop());
+            nbhSides.unshift(nbhSides.pop());
                 for (let road of nbhSides[1]){
                     for(let node of road.nodes){
                     if (node.y === maxY){
@@ -967,6 +971,7 @@ export class Network{
                 if(bNode.y === maxY){
                     this.deleteNbh(this.nbhs[id]);
                     break;
+               
                 }
             }
         }
@@ -1170,7 +1175,6 @@ export class Network{
     }
 
     divideNbhByRoad(road, nbh){
-        //console.log("ROAD", road);
         let oNodes = nbh.getONodes();
         let pointA = road.nodes[0]
         let pointB =road.nodes[road.nodes.length-1];
